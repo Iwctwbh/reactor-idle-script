@@ -133,6 +133,12 @@ if (typeof global !== 'undefined') {
           global.ui.gameUi.reactor.tiles
             .filter((f) => f.meta)
             .map((m) => {
+              if (global.interval && !needHeatAlert && needHeatAlertFlag) {
+                needHeatAlertFlag = false;
+                setTimeout(() => {
+                  needHeatAlert = true;
+                }, 1000);
+              }
               if (global.interval && needHeatAlert) {
                 let component = global.game.getMeta().componentsById[m.meta.id];
                 let strategy = component.strategy;
@@ -147,10 +153,8 @@ if (typeof global !== 'undefined') {
                   $('#stopButton').click();
                   global.game.eventManager.invokeEvent('pauseTime');
                   needHeatAlert = false;
+                  needHeatAlertFlag = true;
                   alert('有组件过热！');
-                  setTimeout(() => {
-                    needHeatAlert = true;
-                  }, 5000);
                 }
               }
               return m;
